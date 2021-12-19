@@ -1,6 +1,6 @@
 import threading
 import time
-from Utils import Singleton_Class
+from Utils.supportFunc import Singleton_Class
 
 
 class SPI(metaclass=Singleton_Class.SingletonMeta):
