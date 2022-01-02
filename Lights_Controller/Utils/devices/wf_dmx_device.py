@@ -1,5 +1,8 @@
 from Utils.supportFunc import Script_support
 from Utils.devices.base_device import BASE_DEVICE
+from Utils.SPI.SPI_Process import SPI
+
+spiHandler = SPI()
 
 List_Client_DIR = 'Utils/devices/list_devices/list_dmx.cfg'
 
@@ -10,15 +13,24 @@ class WF_DMX(BASE_DEVICE):
                             Script_support.ReadScript(List_Client_DIR)
                             )
 
-    def CheckRule(self, data):
-        # data structure : [ID][index][message][color]
-        if data[0] in self._ClientList:
-            if data[1] > self._ClientList[data[0]]:
-                return 0
-        else:
-            return 0
+    def CheckRule(self, data=""):
+        deviceCheck = data[0].split('-')
+        try:
+            if (int(self._ClientList[deviceCheck[0]]) <= int(deviceCheck[1])):
+                return False
+        except:
+            print('loi nhe')
+            return False
 
-        if (int(data[2]) > 254) or (int(data[3]) > 7):
-            return 0
+        if (data[1] not in ('ON', 'OFF')):
+            return False
+        elif (data[1] == 'ON'):
+            colorCheck = data[2].split('.')
+            if (
+                int(colorCheck[0]) > 255
+                or int(colorCheck[1]) > 255
+                or int(colorCheck[2]) > 255
+            ):
+                return False
+        return True
 
-        return 1
